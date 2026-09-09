@@ -1,8 +1,8 @@
 {
   "name": "github-actions-cron-viewer",
-  "displayName": "GitHub Actions Cron & Schedule Viewer",
-  "description": "See when your GitHub Actions cron schedules run: a short inline summary, a month calendar, the next runs, your local time and timezone-aware validation.",
-  "version": "0.3.1",
+  "displayName": "GitHub Actions Cron Calendar",
+  "description": "See what your GitHub Actions cron schedules mean: a plain-English summary above every cron line, a month calendar of scheduled runs in your local timezone, and warnings for GitHub's rules.",
+  "version": "0.4.0",
   "publisher": "adck8888",
   "license": "MIT",
   "icon": "media/icon.png",
@@ -10,7 +10,7 @@
     "vscode": "^1.85.0"
   },
   "categories": [
-    "Programming Languages",
+    "Visualization",
     "Linters",
     "Other"
   ],
@@ -19,11 +19,22 @@
     "github actions cron",
     "github actions schedule",
     "cron",
+    "cron calendar",
     "cron viewer",
     "cron preview",
+    "cron parser",
+    "crontab",
+    "schedule",
+    "scheduled workflow",
     "workflow schedule",
     "github workflow",
-    "github actions workflow"
+    "github actions workflow",
+    "timezone",
+    "utc",
+    "calendar",
+    "ci",
+    "devops",
+    "yaml"
   ],
   "repository": {
     "type": "git",

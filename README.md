@@ -1,4 +1,4 @@
-# GitHub Actions Cron & Schedule Viewer
+# GitHub Actions Cron Calendar
 
 Read GitHub Actions cron schedules without leaving your editor. Open any file under
 `.github/workflows/`, and every `cron:` entry gets a one-line summary above it — when it runs, in
@@ -37,7 +37,7 @@ Click it and the **Schedule Calendar** opens beside the file:
 
 ```
 Nightly checks
-3 schedules · Next run in 5h 37m · Local timezone: Asia/Yerevan
+3 schedules · Next scheduled run in 5h 37m · Local timezone: Asia/Yerevan
 
 ● Weekdays            ● Sunday             ● Every 6 hours
   04:00 UTC → 08:00     02:30 Asia/Yerevan    :15 America/New_York
@@ -47,12 +47,12 @@ Nightly checks
 September 2026  ‹ ›                              Today
   SUN     MON     TUE     WED     THU     FRI     SAT
                     1       2       3       4       5
-                  5 runs  5 runs  5 runs  5 runs  4 runs
+                5 sched 5 sched 5 sched 5 sched 4 sched
                   ▄▄▄▄▄   ▄▄▄▄▄   ▄▄▄▄▄   ▄▄▄▄▄   ▄▄▄▄▄
     6       7       8       9      10      11      12
   ...
 
-September 10 · 5 runs
+September 10 · 5 scheduled runs
 LOCAL TIME  SCHEDULE          WORKFLOW TIME
 02:15       ● Every 6 hours   18:15 America/New_York
 08:00       ● Weekdays        04:00 UTC
@@ -64,6 +64,9 @@ LOCAL TIME  SCHEDULE          WORKFLOW TIME
 Every schedule in the file is drawn on the same month, each with its own colour, so you can see
 where two workflows collide. Click a day to see the exact times.
 
+These are the runs GitHub *would* start from the cron expression — not a history of runs that
+happened. The extension never calls the GitHub API.
+
 ## Features
 
 - **Short CodeLens** above every `cron:` entry: `Mon–Fri · 04:00 UTC → 08:00 local · next in 6h 24m`.
@@ -73,12 +76,12 @@ where two workflows collide. Click a day to see the exact times.
     Days are your days: a run is drawn on the date it happens in your timezone. Selecting one lists
     its runs underneath, sorted by your local time, next to the workflow time. Today is selected
     automatically.
-  - **Upcoming** — the next runs of all schedules merged into one chronological list.
-  - **Details** — the cron expression, its full description, the timezone, the next runs, and the
+  - **Upcoming** — the next scheduled runs of all schedules merged into one chronological list.
+  - **Details** — the cron expression, its full description, the timezone, the next scheduled runs, and the
     GitHub-specific notes.
 - **Your local time next to the workflow time.** A schedule declared as `04:00 UTC` also shows as
   `08:00 Asia/Yerevan` if that is where you are, everywhere times appear.
-- **Hover details** on the cron value — description, timezone, next runs and notes, without opening
+- **Hover details** on the cron value — description, timezone, next scheduled runs and notes, without opening
   anything.
 - **Command Palette** — `GitHub Actions: Open Schedule Calendar` and
   `GitHub Actions: Preview Schedule` (a Quick Pick breakdown, useful when you just want a glance).
@@ -122,26 +125,17 @@ silently look like it runs today.
 
 ## Screenshots
 
-<!--
-Screenshots are not bundled yet. Before publishing, capture the CodeLens and the Schedule Calendar
-panel on samples/.github/workflows/demo.yml, save them as media/screenshot-codelens.png and
-media/screenshot-calendar.png, and replace this comment with:
-
-![Inline schedule CodeLens](https://raw.githubusercontent.com/adck8888/github-actions-cron-viewer/main/media/screenshot-codelens.png)
-![Schedule Calendar panel](https://raw.githubusercontent.com/adck8888/github-actions-cron-viewer/main/media/screenshot-calendar.png)
-
-The Marketplace does not resolve relative image paths, so keep the absolute raw.githubusercontent.com URLs.
--->
-
-_Screenshots are on the way._
+![The CodeLens above a cron line and the Schedule Calendar beside it](https://raw.githubusercontent.com/adck8888/github-actions-cron-viewer/main/media/screenshot.png)
 
 ## Installation
 
-- **VS Code Marketplace** — search for “GitHub Actions Cron & Schedule Viewer” in the Extensions view
+## Installation
+
+- **VS Code Marketplace** — search for “GitHub Actions Cron Calendar” in the Extensions view
   (`Ctrl+Shift+X` / `Cmd+Shift+X`) and click Install.
 - **Open VSX** (VSCodium, Gitpod, Cursor and friends) — search for the same name in the Extensions
   view.
-- **From a `.vsix`** — `code --install-extension github-actions-cron-viewer-0.3.1.vsix`, or
+- **From a `.vsix`** — `code --install-extension github-actions-cron-viewer-0.4.0.vsix`, or
   **Extensions → … → Install from VSIX…**
 
 ## Usage

@@ -300,7 +300,8 @@ h1 { font-size: 1.25em; font-weight: 600; margin: 0 0 2px; letter-spacing: -0.01
 }
 
 /* Month grid */
-.grid { max-width: var(--width); display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+/* minmax(0,...) so a narrow panel wraps the cell text instead of scrolling. */
+.grid { max-width: var(--width); display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; }
 .weekday {
   text-align: center; font-size: 0.72em; text-transform: uppercase; letter-spacing: 0.08em;
   color: var(--vscode-descriptionForeground); padding-bottom: 4px;
@@ -334,7 +335,8 @@ h1 { font-size: 1.25em; font-weight: 600; margin: 0 0 2px; letter-spacing: -0.01
 .day.selected .num { font-weight: 700; }
 
 /* Day details */
-.dd { max-width: var(--width); margin-top: 16px; }
+/* The table has a floor width; let it scroll rather than the whole panel. */
+.dd { max-width: var(--width); margin-top: 16px; overflow-x: auto; }
 .dd-title { font-weight: 600; font-size: 1.02em; margin-bottom: 4px; }
 .dd-grid { display: grid; grid-template-columns: 104px minmax(130px, 1fr) minmax(170px, 1fr); }
 .dd-grid > span { padding: 5px 0; border-top: 1px solid var(--line); }
@@ -488,7 +490,7 @@ function renderHeader() {
   ]);
   const next = payload.merged[0];
   if (next) {
-    summary.appendChild(el('span', { text: ' \\u00b7 Next run ' }));
+    summary.appendChild(el('span', { text: ' \\u00b7 Next scheduled run ' }));
     summary.appendChild(el('span', { class: 'strong', text: next.relative }));
   }
   summary.appendChild(el('span', { text: ' \\u00b7 Local timezone: ' + payload.localTimezone }));
@@ -579,7 +581,7 @@ function renderCalendar() {
     const children = [el('div', { class: 'num', text: String(day) })];
     if (entries.length) {
       const total = countRuns(entries);
-      children.push(el('div', { class: 'count', text: total + (total === 1 ? ' run' : ' runs') }));
+      children.push(el('div', { class: 'count', text: total + ' scheduled' }));
       const bars = el('div', { class: 'bars' });
       for (const entry of entries) {
         bars.appendChild(el('i', { style: 'background:' + color(entry.schedule.color) }));
@@ -600,7 +602,7 @@ function renderCalendar() {
 
 function dayTooltip(day, entries) {
   const total = countRuns(entries);
-  const head = payload.monthLabel.slice(0, 3) + ' ' + day + ' \\u00b7 ' + total + (total === 1 ? ' run' : ' runs');
+  const head = payload.monthLabel.slice(0, 3) + ' ' + day + ' \\u00b7 ' + total + (total === 1 ? ' scheduled run' : ' scheduled runs');
   const lines = dayRows(entries).map(({ schedule, run }) =>
     run.localTime + ' your time \\u2014 ' + schedule.title + ' (' + run.time + ' ' + schedule.timezone + ')'
   );
@@ -616,7 +618,7 @@ function renderDayDetails(key) {
   const box = el('div', { class: 'dd' }, [
     el('div', { class: 'dd-title' }, [
       el('span', { text: payload.monthLabel.split(' ')[0] + ' ' + day }),
-      el('span', { class: 'muted', text: ' \\u00b7 ' + total + (total === 1 ? ' run' : ' runs') })
+      el('span', { class: 'muted', text: ' \\u00b7 ' + total + (total === 1 ? ' scheduled run' : ' scheduled runs') })
     ])
   ]);
 
@@ -639,14 +641,14 @@ function renderDayDetails(key) {
 
   const more = entries.reduce((sum, entry) => sum + entry.bucket.more, 0);
   if (more > 0) {
-    box.appendChild(el('div', { class: 'muted dd-more', text: '+ ' + more + ' more runs' }));
+    box.appendChild(el('div', { class: 'muted dd-more', text: '+ ' + more + ' more scheduled runs' }));
   }
   root.appendChild(box);
 }
 
 function renderUpcoming() {
   if (!payload.merged.length) {
-    root.appendChild(el('p', { class: 'empty', text: 'No upcoming runs could be calculated.' }));
+    root.appendChild(el('p', { class: 'empty', text: 'No scheduled runs could be calculated.' }));
     return;
   }
   const box = el('div', { class: 'list' });
@@ -696,7 +698,7 @@ function renderDetails() {
         ]));
       }
 
-      card.appendChild(el('div', { class: 'section-label', text: 'Next runs' }));
+      card.appendChild(el('div', { class: 'section-label', text: 'Next scheduled runs' }));
       for (const run of schedule.nextRuns) {
         card.appendChild(el('div', { class: 'run-row' }, [
           el('span', { class: 'date', text: run.date }),

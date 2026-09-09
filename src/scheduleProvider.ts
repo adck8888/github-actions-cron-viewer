@@ -144,7 +144,7 @@ function hoverMarkdown(entry: AnnotatedSchedule): vscode.MarkdownString {
     markdown.appendMarkdown(
       `Timezone: \`${info.timezone}\`${info.timezoneExplicit ? '' : ' _(default)_'}\n\n`
     );
-    markdown.appendMarkdown('**Next runs**\n\n');
+    markdown.appendMarkdown('**Next scheduled runs**\n\n');
     for (const run of info.nextRuns) {
       markdown.appendMarkdown(`- ${run}\n`);
     }
@@ -269,7 +269,7 @@ function showDetails(entry: AnnotatedSchedule): void {
   ];
 
   if (info.nextRuns.length > 0) {
-    items.push({ label: 'Next runs', kind: vscode.QuickPickItemKind.Separator });
+    items.push({ label: 'Next scheduled runs', kind: vscode.QuickPickItemKind.Separator });
     items.push(...info.nextRuns.map((run) => ({ label: run })));
   }
 

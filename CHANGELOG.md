@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.0
+
+- Renamed to **GitHub Actions Cron Calendar**, with a calendar icon and a description that says what
+  the extension does rather than what it contains.
+- **"Scheduled runs", not "runs", wherever the two could be confused.** The calendar fills in past
+  days as well as future ones, so a bare `5 runs` read like a history of runs that happened. It is
+  not: nothing here touches the GitHub API.
+- A narrow panel no longer scrolls sideways; the calendar cells and the day table shrink instead.
+
 ## 0.3.1
 
 - **The calendar is now the reader's calendar.** Runs are filed under the day they happen in your
