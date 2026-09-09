@@ -29,7 +29,7 @@ jobs:
 you see a short CodeLens above each schedule, not a wall of text:
 
 ```
-⏱ Mon–Fri · 04:00 UTC · Next in 6h 24m · Open calendar
+⏱ Mon–Fri · 04:00 UTC · Next in 6h 24m · Calendar
    - cron: '0 4 * * 1-5'
 ```
 
@@ -47,8 +47,9 @@ Nightly checks · nightly.yml
     6 ●   7 ●   8 ●   9 ●  10 ●  11 ●  12
    ...
 
-   Thu, September 10 — 1 run
-   ● 04:00  UTC  →  08:00 your time        0 4 * * 1-5
+   Thu, Sep 10 · 5 runs
+   ● 04:00  Mon–Fri    UTC                → 08:00 your time
+   ● 00:15  every 6h   America/New_York   → 08:15 your time
 ```
 
 Every schedule in the file is drawn on the same month, each with its own colour, so you can see

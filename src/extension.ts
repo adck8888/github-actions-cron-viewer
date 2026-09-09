@@ -8,6 +8,7 @@ import {
   previewSchedule,
   refreshDiagnostics
 } from './scheduleProvider';
+import { SchedulePanel } from './calendarPanel';
 
 const WORKFLOW_SELECTOR: vscode.DocumentSelector = [
   { language: 'yaml', scheme: 'file' },
@@ -20,6 +21,7 @@ const DIAGNOSTIC_DELAY_MS = 300;
 const COUNTDOWN_REFRESH_MS = 60_000;
 
 export function activate(context: vscode.ExtensionContext): void {
+  SchedulePanel.configure(context.extensionUri);
   const codeLensProvider = new ScheduleCodeLensProvider();
   const diagnostics = vscode.languages.createDiagnosticCollection('githubActionsCron');
   let pending: NodeJS.Timeout | undefined;

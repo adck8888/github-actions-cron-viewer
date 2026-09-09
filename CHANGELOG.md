@@ -10,10 +10,12 @@
   exact times of that day.
 - **Local time everywhere.** Each run is shown both in the workflow's timezone and in yours, with
   runs that fall on a different calendar day locally marked as such.
-- **Much shorter CodeLens** — `⏱ Mon–Fri · 04:00 UTC · Next in 6h 24m · Open calendar` instead of the
+- **Much shorter CodeLens** — `⏱ Mon–Fri · 04:00 UTC · Next in 6h 24m · Calendar` instead of the
   full sentence and a list of dates. The countdown refreshes every minute.
 - GitHub-specific notes moved into their own block in the panel instead of being mixed into the
   description.
+- The panel is styled from VS Code theme variables and uses codicons, so it matches the editor in
+  dark, light and high contrast themes.
 
 ## 0.1.0
 

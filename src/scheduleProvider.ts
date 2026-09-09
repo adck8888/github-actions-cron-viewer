@@ -64,12 +64,12 @@ function singleLineRange(document: vscode.TextDocument, start: number, end: numb
 
 /**
  * Deliberately short: a long CodeLens buries the YAML it sits above.
- * "Mon-Fri · 04:00 UTC · Next in 6h 24m · Open calendar"
+ * "Mon-Fri · 04:00 UTC · Next in 6h 24m · Calendar"
  */
 function lensTitle(entry: AnnotatedSchedule): string {
   const { info, schedule } = entry;
   if (!info.valid) {
-    return '$(error) Invalid cron expression · Open details';
+    return '$(error) Invalid cron expression · Calendar';
   }
 
   const summary = shortSummary(schedule.expression, info.timezone) ?? info.description;
@@ -80,7 +80,7 @@ function lensTitle(entry: AnnotatedSchedule): string {
   return [
     `${icon} ${summary} ${info.timezone}`,
     next ? `Next ${relativeTime(next)}` : undefined,
-    'Open calendar'
+    'Calendar'
   ]
     .filter(Boolean)
     .join(' · ');
