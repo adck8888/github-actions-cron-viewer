@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.1
+
+- **The calendar is now the reader's calendar.** Runs are filed under the day they happen in your
+  timezone, not the workflow's: a job that fires at 18:15 in New York shows up on the next day in
+  Yerevan, and the details of a day never list a run that happens for you on another one. The
+  workflow time is untouched — it is still shown as written, next to its timezone.
+
 ## 0.3.0
 
 - **Redesigned Schedule Calendar panel.** The header now names the workflow and summarises it in one

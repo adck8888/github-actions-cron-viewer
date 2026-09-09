@@ -33,13 +33,14 @@ export interface RunView {
   relative: string;
 }
 
+/** The runs of one local calendar day, in the user's timezone. */
 export interface DayRuns {
   runs: Array<{
     iso: string;
+    /** Clock time in the schedule's own timezone, e.g. "18:15". */
     time: string;
+    /** Clock time in the user's timezone. The day is the bucket's own key. */
     localTime: string;
-    localDateDiffers: boolean;
-    localDate: string;
   }>;
   more: number;
 }
@@ -92,6 +93,8 @@ export interface BuildOptions {
   focusedIndex?: number;
   /** Reference "now". Used by tests. */
   from?: Date;
+  /** Overrides the user's timezone. Used by tests. */
+  localTimezone?: string;
 }
 
 const FULL_WEEKDAY: Record<string, string> = {
@@ -183,7 +186,7 @@ export function buildCalendarPayload(
   const nextRunsCount = options.nextRunsCount ?? 5;
   const use24HourFormat = options.use24HourFormat ?? true;
   const from = options.from ?? new Date();
-  const local = localTimezone();
+  const local = options.localTimezone ?? localTimezone();
 
   const schedules: SchedulePayload[] = findSchedules(text).map((schedule, index) => {
     const info = describeSchedule(schedule.expression, schedule.timezone, {
@@ -196,17 +199,17 @@ export function buildCalendarPayload(
     const days: Record<string, DayRuns> = {};
     let monthRunCount = 0;
     if (info.valid) {
-      for (const run of runsInMonth(schedule.expression, timezone, year, month)) {
+      // The grid is the user's calendar, so a run is filed under the day it
+      // happens for them: 18:15 in New York belongs to the next day in Yerevan.
+      for (const run of runsInMonth(schedule.expression, timezone, year, month, local)) {
         monthRunCount++;
-        const key = dayKey(run, timezone);
+        const key = dayKey(run, local);
         const bucket = (days[key] ??= { runs: [], more: 0 });
         if (bucket.runs.length < MAX_RUNS_PER_DAY) {
           bucket.runs.push({
             iso: run.toISOString(),
             time: timeInTimezone(run, timezone, use24HourFormat),
-            localTime: timeInTimezone(run, local, use24HourFormat),
-            localDate: shortDate(run, local),
-            localDateDiffers: dayKey(run, timezone) !== dayKey(run, local)
+            localTime: timeInTimezone(run, local, use24HourFormat)
           });
         } else {
           bucket.more++;

@@ -53,12 +53,12 @@ September 2026  ‹ ›                              Today
   ...
 
 September 10 · 5 runs
-LOCAL TIME   SCHEDULE          WORKFLOW TIME
-08:00        ● Weekdays        04:00 UTC
-08:15        ● Every 6 hours   00:15 America/New_York
-14:15        ● Every 6 hours   06:15 America/New_York
-20:15        ● Every 6 hours   12:15 America/New_York
-02:15 Sep 11 ● Every 6 hours   18:15 America/New_York
+LOCAL TIME  SCHEDULE          WORKFLOW TIME
+02:15       ● Every 6 hours   18:15 America/New_York
+08:00       ● Weekdays        04:00 UTC
+08:15       ● Every 6 hours   00:15 America/New_York
+14:15       ● Every 6 hours   06:15 America/New_York
+20:15       ● Every 6 hours   12:15 America/New_York
 ```
 
 Every schedule in the file is drawn on the same month, each with its own colour, so you can see
@@ -70,8 +70,9 @@ where two workflows collide. Click a day to see the exact times.
   The countdown refreshes while you work, and clicking anywhere on it opens the calendar.
 - **Schedule Calendar panel** with three views:
   - **Calendar** — a month grid with the run count and a colour bar per schedule on every day.
-    Selecting a day lists its runs underneath, sorted by your local time, next to the workflow time.
-    Today is selected automatically.
+    Days are your days: a run is drawn on the date it happens in your timezone. Selecting one lists
+    its runs underneath, sorted by your local time, next to the workflow time. Today is selected
+    automatically.
   - **Upcoming** — the next runs of all schedules merged into one chronological list.
   - **Details** — the cron expression, its full description, the timezone, the next runs, and the
     GitHub-specific notes.
@@ -140,7 +141,7 @@ _Screenshots are on the way._
   (`Ctrl+Shift+X` / `Cmd+Shift+X`) and click Install.
 - **Open VSX** (VSCodium, Gitpod, Cursor and friends) — search for the same name in the Extensions
   view.
-- **From a `.vsix`** — `code --install-extension github-actions-cron-viewer-0.3.0.vsix`, or
+- **From a `.vsix`** — `code --install-extension github-actions-cron-viewer-0.3.1.vsix`, or
   **Extensions → … → Install from VSIX…**
 
 ## Usage

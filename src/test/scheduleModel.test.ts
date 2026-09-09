@@ -127,7 +127,7 @@ describe('buildCalendarPayload', () => {
   ].join('\n');
 
   it('builds the month grid for every schedule at once', () => {
-    const payload = buildCalendarPayload(workflow, 'demo.yml', 2026, 9, { from: FROM });
+    const payload = buildCalendarPayload(workflow, 'demo.yml', 2026, 9, { from: FROM, localTimezone: 'UTC' });
 
     assert.strictEqual(payload.workflowName, 'Scheduled maintenance');
     assert.strictEqual(payload.schedules.length, 2);
@@ -147,8 +147,44 @@ describe('buildCalendarPayload', () => {
     assert.notStrictEqual(weekdays.color, sundays.color);
   });
 
+  it('files each run under the day it happens on for the reader', () => {
+    // 18:15 in New York is 02:15 the next morning in Yerevan, so it belongs to
+    // the next cell - and never to the previous day's details.
+    const workflow =
+      "on:\n  schedule:\n    - cron: '15 18 * * *'\n      timezone: 'America/New_York'\n";
+
+    const yerevan = buildCalendarPayload(workflow, 'demo.yml', 2026, 9, {
+      from: FROM,
+      localTimezone: 'Asia/Yerevan'
+    });
+    const [schedule] = yerevan.schedules;
+
+    // 18:15 on Sep 10 in New York is 22:15 UTC, and it sits in the Sep 11 cell.
+    assert.strictEqual(schedule.days['2026-09-11'].runs[0].iso, '2026-09-10T22:15:00.000Z');
+    assert.strictEqual(schedule.days['2026-09-11'].runs[0].localTime, '02:15');
+    // The workflow time is left alone: it is still 18:15 where the cron runs.
+    assert.strictEqual(schedule.days['2026-09-11'].runs[0].time, '18:15');
+
+    // Every local day of the month gets exactly one run, and none spills out.
+    assert.strictEqual(Object.keys(schedule.days).length, 30);
+    assert.strictEqual(schedule.monthRunCount, 30);
+    assert.ok(schedule.days['2026-09-01'], 'the local month must start on the 1st');
+    assert.ok(!schedule.days['2026-10-01'], 'and must not spill into October');
+    assert.ok(
+      Object.values(schedule.days).every((day) => day.runs[0].localTime === '02:15'),
+      'every cell holds the run that happens on it locally'
+    );
+
+    // The same schedule read from New York keeps its own day.
+    const newYork = buildCalendarPayload(workflow, 'demo.yml', 2026, 9, {
+      from: FROM,
+      localTimezone: 'America/New_York'
+    });
+    assert.strictEqual(newYork.schedules[0].days['2026-09-10'].runs[0].localTime, '18:15');
+  });
+
   it('merges the upcoming runs of all schedules in chronological order', () => {
-    const payload = buildCalendarPayload(workflow, 'demo.yml', 2026, 9, { from: FROM });
+    const payload = buildCalendarPayload(workflow, 'demo.yml', 2026, 9, { from: FROM, localTimezone: 'UTC' });
     const isos = payload.merged.map((run) => run.iso);
 
     assert.deepStrictEqual([...isos].sort(), isos);
@@ -157,7 +193,7 @@ describe('buildCalendarPayload', () => {
   });
 
   it('keeps the panel usable when a workflow has no schedules or broken cron', () => {
-    const empty = buildCalendarPayload('name: CI\non:\n  push:\n', 'ci.yml', 2026, 9, { from: FROM });
+    const empty = buildCalendarPayload('name: CI\non:\n  push:\n', 'ci.yml', 2026, 9, { from: FROM, localTimezone: 'UTC' });
     assert.deepStrictEqual(empty.schedules, []);
     assert.deepStrictEqual(empty.merged, []);
 
@@ -166,7 +202,7 @@ describe('buildCalendarPayload', () => {
       'broken.yml',
       2026,
       9,
-      { from: FROM }
+      { from: FROM, localTimezone: 'UTC' }
     );
     assert.strictEqual(broken.schedules.length, 1);
     assert.strictEqual(broken.schedules[0].valid, false);

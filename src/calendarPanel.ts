@@ -627,10 +627,8 @@ function renderDayDetails(key) {
   ]);
 
   for (const { schedule, run } of dayRows(entries)) {
-    grid.appendChild(el('span', { class: 'dd-local' }, [
-      el('span', { text: run.localTime }),
-      run.localDateDiffers ? el('span', { class: 'muted', text: ' ' + run.localDate }) : null
-    ]));
+    // No date needed: every run in this table happens on the selected day.
+    grid.appendChild(el('span', { class: 'dd-local', text: run.localTime }));
     grid.appendChild(el('span', { class: 'dd-name' }, [
       dot(schedule.color),
       el('span', { text: schedule.title })

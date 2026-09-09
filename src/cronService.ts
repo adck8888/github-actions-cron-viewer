@@ -276,14 +276,17 @@ export function timeInTimezone(date: Date, timezone: string, use24HourFormat = t
 const MAX_MONTH_RUNS = 2000;
 
 /**
- * Every run of an expression that falls inside the given month, judged in the
- * schedule's own timezone so the grid matches what the cron literally says.
+ * Every run of an expression that falls inside the given month. The expression
+ * is always interpreted in the schedule's own timezone; `calendarTimezone`
+ * decides which month a run belongs to, so a calendar can be laid out in the
+ * reader's timezone while the cron still means what it says.
  */
 export function runsInMonth(
   expression: string,
   timezone: string,
   year: number,
-  month: number
+  month: number,
+  calendarTimezone = timezone
 ): Date[] {
   const runs: Date[] = [];
   try {
@@ -297,7 +300,7 @@ export function runsInMonth(
         break;
       }
       const run = interval.next().toDate();
-      const { year: runYear, month: runMonth } = dateInTimezone(run, timezone);
+      const { year: runYear, month: runMonth } = dateInTimezone(run, calendarTimezone);
       if (runYear > year || (runYear === year && runMonth > month)) {
         break;
       }
