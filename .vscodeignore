@@ -12,3 +12,4 @@ tsconfig.json
 **/*.map
 .preview/**
 .vscodeignore
+media/screenshot.png
