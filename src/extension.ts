@@ -1,8 +1,10 @@
 import * as vscode from 'vscode';
 import {
+  PANEL_COMMAND,
   PREVIEW_COMMAND,
   ScheduleCodeLensProvider,
   ScheduleHoverProvider,
+  openSchedulePanel,
   previewSchedule,
   refreshDiagnostics
 } from './scheduleProvider';
@@ -13,6 +15,9 @@ const WORKFLOW_SELECTOR: vscode.DocumentSelector = [
 ];
 
 const DIAGNOSTIC_DELAY_MS = 300;
+
+/** The CodeLens shows "Next in 6h 24m", so it has to be re-rendered as time passes. */
+const COUNTDOWN_REFRESH_MS = 60_000;
 
 export function activate(context: vscode.ExtensionContext): void {
   const codeLensProvider = new ScheduleCodeLensProvider();
@@ -26,12 +31,16 @@ export function activate(context: vscode.ExtensionContext): void {
     pending = setTimeout(() => safeRefresh(document, diagnostics), DIAGNOSTIC_DELAY_MS);
   };
 
+  const countdown = setInterval(() => codeLensProvider.refresh(), COUNTDOWN_REFRESH_MS);
+
   context.subscriptions.push(
     codeLensProvider,
     diagnostics,
     vscode.languages.registerCodeLensProvider(WORKFLOW_SELECTOR, codeLensProvider),
     vscode.languages.registerHoverProvider(WORKFLOW_SELECTOR, new ScheduleHoverProvider()),
     vscode.commands.registerCommand(PREVIEW_COMMAND, previewSchedule),
+    vscode.commands.registerCommand(PANEL_COMMAND, openSchedulePanel),
+    new vscode.Disposable(() => clearInterval(countdown)),
     vscode.workspace.onDidOpenTextDocument((document) => safeRefresh(document, diagnostics)),
     vscode.workspace.onDidChangeTextDocument((event) => scheduleDiagnostics(event.document)),
     vscode.workspace.onDidCloseTextDocument((document) => diagnostics.delete(document.uri)),

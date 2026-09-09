@@ -10,3 +10,5 @@ tsconfig.json
 .mocharc.json
 .gitignore
 **/*.map
+.preview/**
+.vscodeignore

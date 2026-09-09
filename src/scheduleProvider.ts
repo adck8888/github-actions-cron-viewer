@@ -1,8 +1,16 @@
 import * as vscode from 'vscode';
-import { describeSchedule, formatRunShort, nextRunDates, ScheduleDescription } from './cronService';
+import {
+  describeSchedule,
+  nextRunDates,
+  relativeTime,
+  ScheduleDescription,
+  shortSummary
+} from './cronService';
+import { SchedulePanel } from './calendarPanel';
 import { findSchedules, isWorkflowPath, WorkflowSchedule } from './workflowParser';
 
 export const PREVIEW_COMMAND = 'githubActionsCron.previewSchedule';
+export const PANEL_COMMAND = 'githubActionsCron.openSchedulePanel';
 
 interface Settings {
   enableCodeLens: boolean;
@@ -54,19 +62,28 @@ function singleLineRange(document: vscode.TextDocument, start: number, end: numb
   return new vscode.Range(from, to.line === from.line ? to : document.lineAt(from.line).range.end);
 }
 
+/**
+ * Deliberately short: a long CodeLens buries the YAML it sits above.
+ * "Mon-Fri · 04:00 UTC · Next in 6h 24m · Open calendar"
+ */
 function lensTitle(entry: AnnotatedSchedule): string {
   const { info, schedule } = entry;
   if (!info.valid) {
-    return `$(error) ${info.error ?? 'Invalid cron expression'}`;
+    return '$(error) Invalid cron expression · Open details';
   }
-  const { use24HourFormat } = settings();
-  const upcoming = nextRunDates(schedule.expression, info.timezone, 3)
-    .map((date) => formatRunShort(date, info.timezone, use24HourFormat))
-    .join(' · ');
+
+  const summary = shortSummary(schedule.expression, info.timezone) ?? info.description;
+  const [next] = nextRunDates(schedule.expression, info.timezone, 1);
   const blocking = info.warnings.some((warning) => warning.severity === 'error');
   const icon = blocking ? '$(warning)' : '$(clock)';
-  const head = `${icon} ${info.description} · ${info.timezone}`;
-  return upcoming ? `${head} · Next: ${upcoming}` : head;
+
+  return [
+    `${icon} ${summary} ${info.timezone}`,
+    next ? `Next ${relativeTime(next)}` : undefined,
+    'Open calendar'
+  ]
+    .filter(Boolean)
+    .join(' · ');
 }
 
 export class ScheduleCodeLensProvider implements vscode.CodeLensProvider {
@@ -89,8 +106,8 @@ export class ScheduleCodeLensProvider implements vscode.CodeLensProvider {
       (entry, index) =>
         new vscode.CodeLens(entry.range, {
           title: lensTitle(entry),
-          tooltip: 'Show schedule details',
-          command: PREVIEW_COMMAND,
+          tooltip: 'Open the schedule calendar',
+          command: PANEL_COMMAND,
           arguments: [{ uri: document.uri.toString(), index }]
         })
     );
@@ -167,6 +184,21 @@ export function refreshDiagnostics(
     diagnostic.source = 'GitHub Actions Cron';
   }
   collection.set(document.uri, diagnostics);
+}
+
+/** Backing implementation of the "GitHub Actions: Open Schedule Calendar" command. */
+export async function openSchedulePanel(arg?: { uri?: string; index?: number }): Promise<void> {
+  const document = arg?.uri
+    ? await vscode.workspace.openTextDocument(vscode.Uri.parse(arg.uri))
+    : vscode.window.activeTextEditor?.document;
+
+  if (!document || collectSchedules(document).length === 0) {
+    void vscode.window.showInformationMessage(
+      'No cron schedule found. Open a .github/workflows file that uses "on: schedule".'
+    );
+    return;
+  }
+  SchedulePanel.show(document, arg?.index ?? 0);
 }
 
 /** Backing implementation of the "GitHub Actions: Preview Schedule" command. */

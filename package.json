@@ -1,8 +1,8 @@
 {
   "name": "github-actions-cron-viewer",
   "displayName": "GitHub Actions Cron & Schedule Viewer",
-  "description": "Preview GitHub Actions cron schedules in plain English, see the next workflow runs and timezones inline in your workflow files.",
-  "version": "0.1.0",
+  "description": "See when your GitHub Actions cron schedules run: a short inline summary, a month calendar, the next runs, your local time and timezone-aware validation.",
+  "version": "0.2.0",
   "publisher": "adck8888",
   "license": "MIT",
   "icon": "media/icon.png",
@@ -44,6 +44,11 @@
   ],
   "contributes": {
     "commands": [
+      {
+        "command": "githubActionsCron.openSchedulePanel",
+        "title": "Open Schedule Calendar",
+        "category": "GitHub Actions"
+      },
       {
         "command": "githubActionsCron.previewSchedule",
         "title": "Preview Schedule",

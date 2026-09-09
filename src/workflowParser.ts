@@ -55,6 +55,16 @@ function findScheduleNode(root: unknown): unknown {
   return (triggers as YAMLMap).get('schedule', true);
 }
 
+/** The workflow's `name:`, used as the title of the schedule panel. */
+export function findWorkflowName(text: string): string | undefined {
+  try {
+    const root = parseDocument(text, { keepSourceTokens: false }).contents;
+    return isMap(root) ? stringValue((root as YAMLMap).get('name', true)) : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 /**
  * Extracts every cron schedule from a GitHub Actions workflow document.
  * Malformed YAML, missing triggers or a workflow without `schedule` all
