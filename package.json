@@ -1,7 +1,7 @@
 {
   "name": "github-actions-cron-viewer",
   "displayName": "GitHub Actions Cron Calendar",
-  "description": "See what your GitHub Actions cron schedules mean: a plain-English summary above every cron line, a month calendar of scheduled runs in your local timezone, and warnings for GitHub's rules.",
+  "description": "Turn GitHub Actions cron schedules into a visual calendar. See inline summaries, upcoming scheduled runs, local times, and GitHub-specific warnings.",
   "version": "0.4.0",
   "publisher": "adck8888",
   "license": "MIT",
