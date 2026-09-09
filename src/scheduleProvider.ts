@@ -1,11 +1,14 @@
 import * as vscode from 'vscode';
 import {
   describeSchedule,
+  localTimezone,
   nextRunDates,
   relativeTime,
   ScheduleDescription,
-  shortSummary
+  shortSummary,
+  timeInTimezone
 } from './cronService';
+import { splitSummary } from './scheduleModel';
 import { SchedulePanel } from './calendarPanel';
 import { findSchedules, isWorkflowPath, WorkflowSchedule } from './workflowParser';
 
@@ -63,27 +66,34 @@ function singleLineRange(document: vscode.TextDocument, start: number, end: numb
 }
 
 /**
- * Deliberately short: a long CodeLens buries the YAML it sits above.
- * "Mon-Fri · 04:00 UTC · Next in 6h 24m · Calendar"
+ * Deliberately short: a long CodeLens buries the YAML it sits above. The whole
+ * lens opens the calendar, so it does not spend words saying so.
+ * "$(calendar) Mon-Fri . 04:00 UTC -> 08:00 local . next in 5h 50m"
  */
 function lensTitle(entry: AnnotatedSchedule): string {
   const { info, schedule } = entry;
   if (!info.valid) {
-    return '$(error) Invalid cron expression · Calendar';
+    return '$(error) Invalid cron expression';
   }
 
   const summary = shortSummary(schedule.expression, info.timezone) ?? info.description;
   const [next] = nextRunDates(schedule.expression, info.timezone, 1);
+  const local = localTimezone();
   const blocking = info.warnings.some((warning) => warning.severity === 'error');
-  const icon = blocking ? '$(warning)' : '$(clock)';
+
+  // Only a schedule with one time of day can be translated to a local clock time.
+  const hasClockTime = /^\d/.test(splitSummary(summary).time);
+  const localTime =
+    next && local !== info.timezone && hasClockTime
+      ? ` \u2192 ${timeInTimezone(next, local, settings().use24HourFormat)} local`
+      : '';
 
   return [
-    `${icon} ${summary} ${info.timezone}`,
-    next ? `Next ${relativeTime(next)}` : undefined,
-    'Calendar'
+    `${blocking ? '$(warning)' : '$(calendar)'} ${summary} ${info.timezone}${localTime}`,
+    next ? `next ${relativeTime(next)}` : undefined
   ]
     .filter(Boolean)
-    .join(' · ');
+    .join(' \u00b7 ');
 }
 
 export class ScheduleCodeLensProvider implements vscode.CodeLensProvider {

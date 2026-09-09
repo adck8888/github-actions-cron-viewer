@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 import { relativeTime, runsInMonth, shortSummary } from '../cronService';
-import { buildCalendarPayload, shiftMonth } from '../scheduleModel';
+import { buildCalendarPayload, shiftMonth, splitSummary } from '../scheduleModel';
 
 const FROM = new Date('2026-09-09T12:00:00Z');
 
@@ -74,6 +74,44 @@ describe('shiftMonth', () => {
     assert.deepStrictEqual(shiftMonth(2026, 12, 1), { year: 2027, month: 1 });
     assert.deepStrictEqual(shiftMonth(2026, 1, -1), { year: 2025, month: 12 });
     assert.deepStrictEqual(shiftMonth(2026, 9, 0), { year: 2026, month: 9 });
+  });
+});
+
+describe('splitSummary', () => {
+  it('separates the schedule name from its time of day', () => {
+    const cases: Array<[string, string, string]> = [
+      ['Mon–Fri · 04:00', 'Weekdays', '04:00'],
+      ['Sun · 02:30', 'Sunday', '02:30'],
+      ['Daily · 04:00', 'Daily', '04:00'],
+      ['Mon, Wed, Fri · 09:00', 'Mon, Wed, Fri', '09:00'],
+      ['Day 1, 15 · 00:00', 'Day 1, 15', '00:00'],
+      ['every 6h at :15', 'Every 6 hours', ':15'],
+      ['every 4h', 'Every 4 hours', ''],
+      ['every 5m', 'Every 5 minutes', ''],
+      ['every 1h', 'Every 1 hour', '']
+    ];
+
+    for (const [short, title, time] of cases) {
+      assert.deepStrictEqual(splitSummary(short), { title, time }, short);
+    }
+  });
+
+  it('keeps a 12-hour clock and any trailing qualifier attached to the name', () => {
+    assert.deepStrictEqual(splitSummary('Mon–Fri · 4:00 AM'), {
+      title: 'Weekdays',
+      time: '4:00 AM'
+    });
+    assert.deepStrictEqual(splitSummary('Daily · 00:00 +1'), {
+      title: 'Daily +1',
+      time: '00:00'
+    });
+  });
+
+  it('falls back to the whole label when there is no time to split off', () => {
+    assert.deepStrictEqual(splitSummary('at 04:00 on odd days'), {
+      title: 'at 04:00 on odd days',
+      time: ''
+    });
   });
 });
 

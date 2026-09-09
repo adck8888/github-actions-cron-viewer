@@ -6,12 +6,20 @@
   `GitHub Actions: Open Schedule Calendar`) opens a panel beside the workflow with three views:
   a month calendar with every run day marked, an `Upcoming` list merging all schedules of the file
   in chronological order, and `Details` with the expression, timezone, next runs and notes.
-- All schedules of a workflow are drawn on the same calendar, colour coded. Clicking a day shows the
-  exact times of that day.
+- All schedules of a workflow are drawn on the same calendar, colour coded: each day shows its run
+  count and a colour bar per schedule that fires on it.
+- **Day details.** Selecting a day lists every run of that day under the calendar — your local time,
+  the schedule it belongs to and the workflow time — sorted by local time. Today is selected on
+  open, or the nearest day with a run when today is not in view. Hovering a day shows the same list
+  as a tooltip.
+- The panel header names the workflow and summarises it in one line: how many schedules there are,
+  when the next run is and which timezone you are in, followed by the schedules themselves.
 - **Local time everywhere.** Each run is shown both in the workflow's timezone and in yours, with
   runs that fall on a different calendar day locally marked as such.
-- **Much shorter CodeLens** — `⏱ Mon–Fri · 04:00 UTC · Next in 6h 24m · Calendar` instead of the
-  full sentence and a list of dates. The countdown refreshes every minute.
+- **Much shorter CodeLens** — `Mon–Fri · 04:00 UTC → 08:00 local · next in 6h 24m` instead of the
+  full sentence and a list of dates. The countdown refreshes every minute, and the whole lens opens
+  the calendar, so it no longer spends words saying so. The local time is left out when the workflow
+  already runs in your timezone.
 - GitHub-specific notes moved into their own block in the panel instead of being mixed into the
   description.
 - The panel is styled from VS Code theme variables and uses codicons, so it matches the editor in

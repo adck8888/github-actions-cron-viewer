@@ -29,27 +29,36 @@ jobs:
 you see a short CodeLens above each schedule, not a wall of text:
 
 ```
-⏱ Mon–Fri · 04:00 UTC · Next in 6h 24m · Calendar
+📅 Mon–Fri · 04:00 UTC → 08:00 local · next in 6h 24m
    - cron: '0 4 * * 1-5'
 ```
 
 Click it and the **Schedule Calendar** opens beside the file:
 
 ```
-Nightly checks · nightly.yml
-● Mon–Fri · 04:00  UTC      ● Sun · 02:30  Asia/Yerevan
+Nightly checks
+3 schedules · Next run in 5h 37m · Local timezone: Asia/Yerevan
+
+● Weekdays            ● Sunday             ● Every 6 hours
+  04:00 UTC → 08:00     02:30 Asia/Yerevan    :15 America/New_York
 
 [ Calendar ]  Upcoming   Details
 
-           September 2026                  ‹  Today  ›
-   Sun   Mon   Tue   Wed   Thu   Fri   Sat
-                1 ●   2 ●   3 ●   4 ●   5
-    6 ●   7 ●   8 ●   9 ●  10 ●  11 ●  12
-   ...
+September 2026  ‹ ›                              Today
+  SUN     MON     TUE     WED     THU     FRI     SAT
+                    1       2       3       4       5
+                  5 runs  5 runs  5 runs  5 runs  4 runs
+                  ▄▄▄▄▄   ▄▄▄▄▄   ▄▄▄▄▄   ▄▄▄▄▄   ▄▄▄▄▄
+    6       7       8       9      10      11      12
+  ...
 
-   Thu, Sep 10 · 5 runs
-   ● 04:00  Mon–Fri    UTC                → 08:00 your time
-   ● 00:15  every 6h   America/New_York   → 08:15 your time
+September 10 · 5 runs
+LOCAL TIME   SCHEDULE          WORKFLOW TIME
+08:00        ● Weekdays        04:00 UTC
+08:15        ● Every 6 hours   00:15 America/New_York
+14:15        ● Every 6 hours   06:15 America/New_York
+20:15        ● Every 6 hours   12:15 America/New_York
+02:15 Sep 11 ● Every 6 hours   18:15 America/New_York
 ```
 
 Every schedule in the file is drawn on the same month, each with its own colour, so you can see
@@ -57,11 +66,12 @@ where two workflows collide. Click a day to see the exact times.
 
 ## Features
 
-- **Short CodeLens** above every `cron:` entry: `Mon–Fri · 04:00 UTC · Next in 6h 24m`. The countdown
-  refreshes while you work.
+- **Short CodeLens** above every `cron:` entry: `Mon–Fri · 04:00 UTC → 08:00 local · next in 6h 24m`.
+  The countdown refreshes while you work, and clicking anywhere on it opens the calendar.
 - **Schedule Calendar panel** with three views:
-  - **Calendar** — a month grid with every run day marked, all schedules of the file at once, colour
-    coded. Click a day for the times, arrows to change month.
+  - **Calendar** — a month grid with the run count and a colour bar per schedule on every day.
+    Selecting a day lists its runs underneath, sorted by your local time, next to the workflow time.
+    Today is selected automatically.
   - **Upcoming** — the next runs of all schedules merged into one chronological list.
   - **Details** — the cron expression, its full description, the timezone, the next runs, and the
     GitHub-specific notes.

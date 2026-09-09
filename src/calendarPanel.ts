@@ -215,49 +215,53 @@ const CODICONS = `
 .codicon-info:before { content: "\\ea74"; }
 .codicon-warning:before { content: "\\ea6c"; }
 .codicon-error:before { content: "\\ea87"; }
-.codicon-calendar:before { content: "\\eab0"; }
 `;
 
 const STYLES = `${CODICONS}
 :root {
   --radius: 4px;
   --radius-sm: 3px;
-  --width: 700px;
+  --width: 720px;
   /* contrastBorder only exists in high contrast themes, where it must win. */
   --line: var(--vscode-contrastBorder, var(--vscode-widget-border, rgba(128, 128, 128, 0.25)));
-  /* High contrast themes mark the active element with contrastActiveBorder. */
   --accent: var(--vscode-contrastActiveBorder, var(--vscode-focusBorder));
+  --accent-text: var(--vscode-textLink-foreground, var(--vscode-focusBorder));
 }
 * { box-sizing: border-box; }
 body {
   margin: 0;
-  padding: 14px 18px 28px;
+  padding: 16px 18px 32px;
   font-family: var(--vscode-font-family);
   font-size: var(--vscode-font-size);
   line-height: 1.5;
   color: var(--vscode-foreground);
   background: var(--vscode-editor-background);
 }
-h1 { font-size: 1.1em; font-weight: 600; margin: 0; }
-.subtitle { color: var(--vscode-descriptionForeground); font-size: 0.92em; margin: 1px 0 12px; }
 .empty { color: var(--vscode-descriptionForeground); }
 code { font-family: var(--vscode-editor-font-family); font-size: 0.92em; }
 .muted { color: var(--vscode-descriptionForeground); }
+.dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
 
-/* Schedule chips */
-.legend { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
-.chip {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 1px 8px; min-height: 22px;
-  border: 1px solid var(--line); border-radius: var(--radius);
-  background: none; color: inherit; font: inherit; font-size: 0.92em;
-  text-align: left; cursor: pointer;
+/* Header */
+h1 { font-size: 1.25em; font-weight: 600; margin: 0 0 2px; letter-spacing: -0.01em; }
+.summary { color: var(--vscode-descriptionForeground); font-size: 0.92em; margin-bottom: 12px; }
+.summary .strong { color: var(--vscode-foreground); font-weight: 600; }
+
+.schedules { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.sched {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 5px 12px 6px 9px; min-width: 168px;
+  border: 1px solid var(--line); border-left: 2px solid var(--line);
+  border-radius: var(--radius);
+  background: none; color: inherit; font: inherit; text-align: left; cursor: pointer;
 }
-.chip:hover { background: var(--vscode-list-hoverBackground); }
-.chip:focus-visible { outline: 1px solid var(--vscode-focusBorder); outline-offset: -1px; }
-.chip.focused { border-color: var(--accent); }
-.chip .tz { color: var(--vscode-descriptionForeground); }
-.dot { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+.sched:hover { background: var(--vscode-list-hoverBackground); }
+.sched:focus-visible { outline: 1px solid var(--accent); outline-offset: -1px; }
+.sched.focused { border-color: var(--accent); }
+.sched .dot { margin-top: 6px; }
+.sched-body { display: flex; flex-direction: column; line-height: 1.35; }
+.sched-title { font-weight: 600; }
+.sched-time { color: var(--vscode-descriptionForeground); font-size: 0.9em; }
 
 /* Panel-style tab bar */
 .tabs {
@@ -272,7 +276,7 @@ code { font-family: var(--vscode-editor-font-family); font-size: 0.92em; }
   color: var(--vscode-panelTitle-inactiveForeground, var(--vscode-descriptionForeground));
 }
 .tab:hover { color: var(--vscode-panelTitle-activeForeground, var(--vscode-foreground)); }
-.tab:focus-visible { outline: 1px solid var(--vscode-focusBorder); outline-offset: 2px; }
+.tab:focus-visible { outline: 1px solid var(--accent); outline-offset: 2px; }
 .tab.active {
   color: var(--vscode-panelTitle-activeForeground, var(--vscode-foreground));
   border-bottom-color: var(--vscode-contrastActiveBorder, var(--vscode-panelTitle-activeBorder, var(--vscode-focusBorder)));
@@ -280,7 +284,7 @@ code { font-family: var(--vscode-editor-font-family); font-size: 0.92em; }
 
 /* Month toolbar */
 .month-bar { display: flex; align-items: center; gap: 4px; margin-bottom: 8px; max-width: var(--width); }
-.month-label { font-weight: 600; margin-right: 4px; }
+.month-label { font-weight: 600; font-size: 1.05em; margin-right: 4px; }
 .icon-btn, .today-btn {
   border: 1px solid transparent; background: none;
   color: var(--vscode-foreground); font: inherit;
@@ -292,56 +296,57 @@ code { font-family: var(--vscode-editor-font-family); font-size: 0.92em; }
   background: var(--vscode-toolbar-hoverBackground, var(--vscode-list-hoverBackground));
 }
 .icon-btn:focus-visible, .today-btn:focus-visible {
-  outline: 1px solid var(--vscode-focusBorder); outline-offset: -1px;
+  outline: 1px solid var(--accent); outline-offset: -1px;
 }
 
 /* Month grid */
-.grid { max-width: var(--width); display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.grid { max-width: var(--width); display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
 .weekday {
-  text-align: center; font-size: 0.75em; text-transform: uppercase; letter-spacing: 0.06em;
-  color: var(--vscode-descriptionForeground); padding-bottom: 3px;
+  text-align: center; font-size: 0.72em; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--vscode-descriptionForeground); padding-bottom: 4px;
 }
 .day {
-  min-height: 50px; padding: 3px 5px 4px;
+  display: flex; flex-direction: column; min-height: 58px; padding: 4px 6px 5px;
   border: 1px solid var(--line); border-radius: var(--radius-sm);
   background: none; text-align: left; font: inherit; color: inherit; cursor: default;
 }
 .day.blank { border-color: transparent; }
 .day.has-runs { cursor: pointer; }
 .day.has-runs:hover { background: var(--vscode-list-hoverBackground); }
-.day:focus-visible { outline: 1px solid var(--vscode-focusBorder); outline-offset: -2px; }
+.day:focus-visible { outline: 1px solid var(--accent); outline-offset: -2px; }
+.day .num { font-size: 1.05em; font-weight: 500; line-height: 1.2; }
+.day.has-runs .num { font-weight: 600; }
+.day:not(.has-runs) .num { color: var(--vscode-descriptionForeground); font-weight: 400; }
+.day .count { font-size: 0.72em; color: var(--vscode-descriptionForeground); }
+.day .bars { display: flex; gap: 2px; margin-top: auto; padding-top: 5px; }
+.day .bars i { flex: 1; height: 3px; border-radius: 1px; }
+
+/* Today keeps its accent number; the selected day takes the list selection. */
 .day.today { border-color: var(--accent); }
+.day.today .num { color: var(--accent-text); }
 .day.selected {
   border-color: var(--accent);
-  background: var(--vscode-list-inactiveSelectionBackground, var(--vscode-list-hoverBackground));
+  outline: 1px solid var(--accent); outline-offset: -3px;
+  background: var(--vscode-list-activeSelectionBackground, var(--vscode-list-hoverBackground));
+  color: var(--vscode-list-activeSelectionForeground, var(--vscode-foreground));
 }
-.day .num { font-size: 0.85em; color: var(--vscode-descriptionForeground); }
-.day.has-runs .num, .day.today .num { color: var(--vscode-foreground); }
-.day.has-runs .num { font-weight: 600; }
-.day .dots { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 4px; }
-.day .times {
-  margin-top: 2px; font-size: 0.74em; line-height: 1.3;
-  color: var(--vscode-descriptionForeground);
-}
+.day.selected .num, .day.selected .count { color: inherit; }
+.day.selected .num { font-weight: 700; }
 
-/* Day details under the calendar */
-.day-detail {
-  max-width: var(--width); margin-top: 10px; padding: 9px 11px;
-  border: 1px solid var(--line); border-radius: var(--radius);
-}
-.day-detail h3 {
-  margin: 0 0 6px; font-size: 0.92em; font-weight: 600;
-  display: flex; align-items: center; gap: 6px;
-}
-.day-row {
-  display: grid; grid-template-columns: 7px 52px minmax(96px, auto) 1fr;
-  gap: 9px; align-items: baseline; padding: 2px 0;
-}
-.day-row .time { font-weight: 600; font-variant-numeric: tabular-nums; }
-.day-row .zone {
-  display: flex; align-items: baseline; gap: 6px;
+/* Day details */
+.dd { max-width: var(--width); margin-top: 16px; }
+.dd-title { font-weight: 600; font-size: 1.02em; margin-bottom: 4px; }
+.dd-grid { display: grid; grid-template-columns: 104px minmax(130px, 1fr) minmax(170px, 1fr); }
+.dd-grid > span { padding: 5px 0; border-top: 1px solid var(--line); }
+.dd-grid > .head {
+  border-top: none; padding: 0 0 3px;
+  font-size: 0.72em; text-transform: uppercase; letter-spacing: 0.08em;
   color: var(--vscode-descriptionForeground);
 }
+.dd-local { font-weight: 600; font-variant-numeric: tabular-nums; }
+.dd-name { display: flex; align-items: baseline; gap: 7px; }
+.dd-when { color: var(--vscode-descriptionForeground); font-variant-numeric: tabular-nums; }
+.dd-more { padding-top: 6px; }
 
 /* Run lists */
 .list { max-width: var(--width); border: 1px solid var(--line); border-radius: var(--radius); }
@@ -354,20 +359,20 @@ code { font-family: var(--vscode-editor-font-family); font-size: 0.92em; }
 .run-row .tz { min-width: 122px; }
 .run-row .local { min-width: 168px; }
 .local { display: inline-flex; align-items: baseline; gap: 4px; }
-.day-row .local:empty { display: none; }
 
 /* Details cards */
 .card {
   max-width: var(--width); margin-bottom: 8px; padding: 11px 13px;
   border: 1px solid var(--line); border-radius: var(--radius);
 }
-.card-head { display: flex; align-items: center; gap: 7px; margin-bottom: 3px; }
+.card-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 3px; }
+.card-head .dot { align-self: center; }
 .card-head .title { font-weight: 600; }
 .card .expr { margin: 0 0 8px; }
 .zone-row { display: flex; gap: 8px; padding: 1px 0; }
 .zone-row .label { min-width: 74px; color: var(--vscode-descriptionForeground); }
 .section-label {
-  font-size: 0.75em; text-transform: uppercase; letter-spacing: 0.06em;
+  font-size: 0.72em; text-transform: uppercase; letter-spacing: 0.08em;
   color: var(--vscode-descriptionForeground); margin: 10px 0 3px;
 }
 .notes {
@@ -421,23 +426,19 @@ function icon(name, small) {
   });
 }
 
-function dot(color) {
-  return el('span', { class: 'dot', style: 'background:' + (COLORS[color] || COLORS.blue) });
-}
+function color(name) { return COLORS[name] || COLORS.blue; }
+function dot(name) { return el('span', { class: 'dot', style: 'background:' + color(name) }); }
 
 function pad(n) { return String(n).padStart(2, '0'); }
-function keyFor(day) { return payload.year + '-' + pad(payload.month) + '-' + pad(day); }
+function monthPrefix() { return payload.year + '-' + pad(payload.month); }
+function keyFor(day) { return monthPrefix() + '-' + pad(day); }
 
-/** The schedule without its time: "Mon-Fri · 04:00" -> "Mon-Fri", "every 6h at :15" -> "every 6h". */
-function scheduleLabel(schedule) {
-  if (!schedule.valid) return 'Invalid cron';
-  const parts = (schedule.short || '').split(' · ');
-  const last = parts[parts.length - 1]
-    .replace(/ at :\\d{2}$/, '')
-    .replace(/^\\d{1,2}:\\d{2}(\\s?[AP]M)?\\s*/i, '');
-  if (last) parts[parts.length - 1] = last;
-  else parts.pop();
-  return parts.join(' · ') || schedule.short;
+/** "04:00 UTC \\u2192 08:00 local", or just ":15 America/New_York" for intervals. */
+function scheduleTimeLine(schedule) {
+  const clock = /^\\d/.test(schedule.timeLabel);
+  const head = (schedule.timeLabel || schedule.short) + ' ' + schedule.timezone;
+  if (!clock || !schedule.showLocalTime || !schedule.nextRuns[0]) return head;
+  return head + ' \\u2192 ' + schedule.nextRuns[0].localTime + ' local';
 }
 
 function localLine(run, schedule) {
@@ -458,31 +459,12 @@ function render() {
   root.appendChild(el('h1', { text: payload.workflowName }));
 
   if (payload.schedules.length === 0) {
-    root.appendChild(el('p', { class: 'subtitle', text: payload.fileName }));
+    root.appendChild(el('p', { class: 'summary', text: payload.fileName }));
     root.appendChild(el('p', { class: 'empty', text: 'This workflow has no cron schedules.' }));
     return;
   }
 
-  const count = payload.schedules.length;
-  root.appendChild(el('p', {
-    class: 'subtitle',
-    text: payload.fileName + ' · ' + count + (count === 1 ? ' schedule' : ' schedules') +
-      ' · your timezone: ' + payload.localTimezone
-  }));
-
-  const legend = el('div', { class: 'legend' });
-  for (const schedule of payload.schedules) {
-    legend.appendChild(el('button', {
-      class: 'chip' + (schedule.index === payload.focusedIndex ? ' focused' : ''),
-      title: schedule.expression + ' — go to line ' + (schedule.line + 1),
-      onclick: () => vscode.postMessage({ type: 'reveal', line: schedule.line })
-    }, [
-      dot(schedule.color),
-      el('span', { text: schedule.short }),
-      el('span', { class: 'tz', text: schedule.timezone })
-    ]));
-  }
-  root.appendChild(legend);
+  renderHeader();
 
   const tabs = el('div', { class: 'tabs' });
   for (const [id, label] of [['calendar', 'Calendar'], ['upcoming', 'Upcoming'], ['details', 'Details']]) {
@@ -499,6 +481,40 @@ function render() {
   else renderDetails();
 }
 
+function renderHeader() {
+  const count = payload.schedules.length;
+  const summary = el('div', { class: 'summary' }, [
+    el('span', { text: count + (count === 1 ? ' schedule' : ' schedules') })
+  ]);
+  const next = payload.merged[0];
+  if (next) {
+    summary.appendChild(el('span', { text: ' \\u00b7 Next run ' }));
+    summary.appendChild(el('span', { class: 'strong', text: next.relative }));
+  }
+  summary.appendChild(el('span', { text: ' \\u00b7 Local timezone: ' + payload.localTimezone }));
+  root.appendChild(summary);
+
+  const list = el('div', { class: 'schedules' });
+  for (const schedule of payload.schedules) {
+    list.appendChild(el('button', {
+      class: 'sched' + (schedule.index === payload.focusedIndex ? ' focused' : ''),
+      style: 'border-left-color:' + color(schedule.color),
+      title: schedule.expression + ' \\u2014 go to line ' + (schedule.line + 1),
+      onclick: () => vscode.postMessage({ type: 'reveal', line: schedule.line })
+    }, [
+      dot(schedule.color),
+      el('span', { class: 'sched-body' }, [
+        el('span', { class: 'sched-title', text: schedule.valid ? schedule.title : 'Invalid cron' }),
+        el('span', {
+          class: 'sched-time',
+          text: schedule.valid ? scheduleTimeLine(schedule) : schedule.expression
+        })
+      ])
+    ]));
+  }
+  root.appendChild(list);
+}
+
 function runsForDay(key) {
   const result = [];
   for (const schedule of payload.schedules) {
@@ -510,6 +526,28 @@ function runsForDay(key) {
 
 function countRuns(entries) {
   return entries.reduce((sum, entry) => sum + entry.bucket.runs.length + entry.bucket.more, 0);
+}
+
+/** The runs of one day, ordered by the actual instant, which is local-time order. */
+function dayRows(entries) {
+  return entries
+    .flatMap(({ schedule, bucket }) => bucket.runs.map((run) => ({ schedule, run })))
+    .sort((a, b) => a.run.iso.localeCompare(b.run.iso));
+}
+
+/**
+ * Today when it is in view and has runs, otherwise the first day that does:
+ * an empty details section under the calendar is wasted space.
+ */
+function defaultSelection() {
+  if (payload.todayKey.startsWith(monthPrefix()) && runsForDay(payload.todayKey).length) {
+    return payload.todayKey;
+  }
+  for (let day = 1; day <= payload.daysInMonth; day++) {
+    const key = keyFor(day);
+    if (runsForDay(key).length) return key;
+  }
+  return null;
 }
 
 function renderCalendar() {
@@ -538,64 +576,72 @@ function renderCalendar() {
     if (key === payload.todayKey) classes.push('today');
     if (key === selectedKey) classes.push('selected');
 
-    const dots = el('div', { class: 'dots' });
-    for (const entry of entries) dots.appendChild(dot(entry.schedule.color));
-
-    const children = [el('div', { class: 'num', text: String(day) }), entries.length ? dots : null];
-    if (entries.length === 1 && entries[0].bucket.runs.length <= 2) {
-      children.push(el('div', {
-        class: 'times',
-        text: entries[0].bucket.runs.map((run) => run.time).join(' ')
-      }));
-    } else if (entries.length) {
-      children.push(el('div', { class: 'times', text: countRuns(entries) + ' runs' }));
+    const children = [el('div', { class: 'num', text: String(day) })];
+    if (entries.length) {
+      const total = countRuns(entries);
+      children.push(el('div', { class: 'count', text: total + (total === 1 ? ' run' : ' runs') }));
+      const bars = el('div', { class: 'bars' });
+      for (const entry of entries) {
+        bars.appendChild(el('i', { style: 'background:' + color(entry.schedule.color) }));
+      }
+      children.push(bars);
     }
 
     grid.appendChild(el('button', {
       class: classes.join(' '),
+      title: entries.length ? dayTooltip(day, entries) : '',
       onclick: entries.length ? (() => { selectedKey = key; render(); }) : (() => {})
     }, children));
   }
   root.appendChild(grid);
 
-  if (selectedKey) renderDayDetail(selectedKey);
+  if (selectedKey) renderDayDetails(selectedKey);
 }
 
-function renderDayDetail(key) {
+function dayTooltip(day, entries) {
+  const total = countRuns(entries);
+  const head = payload.monthLabel.slice(0, 3) + ' ' + day + ' \\u00b7 ' + total + (total === 1 ? ' run' : ' runs');
+  const lines = dayRows(entries).map(({ schedule, run }) =>
+    run.localTime + ' your time \\u2014 ' + schedule.title + ' (' + run.time + ' ' + schedule.timezone + ')'
+  );
+  return [head].concat(lines).join('\\n');
+}
+
+function renderDayDetails(key) {
   const entries = runsForDay(key);
   if (!entries.length) return;
-  const [year, month, day] = key.split('-').map(Number);
-  const weekday = WEEKDAYS[new Date(Date.UTC(year, month - 1, day)).getUTCDay()];
+  const day = Number(key.slice(8));
   const total = countRuns(entries);
 
-  const box = el('div', { class: 'day-detail' }, [
-    el('h3', {}, [
-      icon('calendar', true),
-      el('span', { text: weekday + ', ' + payload.monthLabel.slice(0, 3) + ' ' + day }),
-      el('span', { class: 'muted', text: '· ' + total + (total === 1 ? ' run' : ' runs') })
+  const box = el('div', { class: 'dd' }, [
+    el('div', { class: 'dd-title' }, [
+      el('span', { text: payload.monthLabel.split(' ')[0] + ' ' + day }),
+      el('span', { class: 'muted', text: ' \\u00b7 ' + total + (total === 1 ? ' run' : ' runs') })
     ])
   ]);
 
-  // Schedules can sit in different timezones, so order by the actual instant.
-  const rows = entries
-    .flatMap(({ schedule, bucket }) => bucket.runs.map((run) => ({ schedule, run })))
-    .sort((a, b) => a.run.iso.localeCompare(b.run.iso));
+  const grid = el('div', { class: 'dd-grid' }, [
+    el('span', { class: 'head', text: 'Local time' }),
+    el('span', { class: 'head', text: 'Schedule' }),
+    el('span', { class: 'head', text: 'Workflow time' })
+  ]);
 
-  for (const { schedule, run } of rows) {
-    box.appendChild(el('div', { class: 'day-row', title: schedule.expression }, [
-      dot(schedule.color),
-      el('span', { class: 'time', text: run.time }),
-      el('span', { text: scheduleLabel(schedule) }),
-      el('span', { class: 'zone' }, [
-        el('span', { text: schedule.timezone }),
-        localLine(run, schedule)
-      ])
+  for (const { schedule, run } of dayRows(entries)) {
+    grid.appendChild(el('span', { class: 'dd-local' }, [
+      el('span', { text: run.localTime }),
+      run.localDateDiffers ? el('span', { class: 'muted', text: ' ' + run.localDate }) : null
     ]));
+    grid.appendChild(el('span', { class: 'dd-name' }, [
+      dot(schedule.color),
+      el('span', { text: schedule.title })
+    ]));
+    grid.appendChild(el('span', { class: 'dd-when', text: run.time + ' ' + schedule.timezone }));
   }
+  box.appendChild(grid);
 
   const more = entries.reduce((sum, entry) => sum + entry.bucket.more, 0);
   if (more > 0) {
-    box.appendChild(el('div', { class: 'muted', text: '+ ' + more + ' more runs' }));
+    box.appendChild(el('div', { class: 'muted dd-more', text: '+ ' + more + ' more runs' }));
   }
   root.appendChild(box);
 }
@@ -628,8 +674,9 @@ function renderDetails() {
         dot(schedule.color),
         el('span', {
           class: schedule.valid ? 'title' : 'title invalid',
-          text: schedule.valid ? schedule.short : 'Invalid cron expression'
-        })
+          text: schedule.valid ? schedule.title : 'Invalid cron expression'
+        }),
+        schedule.valid ? el('span', { class: 'muted', text: scheduleTimeLine(schedule) }) : null
       ]),
       el('p', { class: 'expr' }, [el('code', { text: schedule.expression })])
     ]);
@@ -685,8 +732,8 @@ window.addEventListener('message', (event) => {
   const message = event.data;
   if (message.type === 'payload') {
     payload = message.payload;
-    if (selectedKey && !selectedKey.startsWith(payload.year + '-' + pad(payload.month))) {
-      selectedKey = null;
+    if (!selectedKey || !selectedKey.startsWith(monthPrefix()) || !runsForDay(selectedKey).length) {
+      selectedKey = defaultSelection();
     }
     render();
   }

@@ -56,6 +56,10 @@ export interface SchedulePayload {
   error?: string;
   /** Compact label for the CodeLens and the panel header. */
   short: string;
+  /** "Weekdays", "Every 6 hours" - the schedule without its time. */
+  title: string;
+  /** "04:00", ":15" or '' when the schedule has no single time of day. */
+  timeLabel: string;
   /** Full sentence from cronstrue. */
   description: string;
   line: number;
@@ -88,6 +92,49 @@ export interface BuildOptions {
   focusedIndex?: number;
   /** Reference "now". Used by tests. */
   from?: Date;
+}
+
+const FULL_WEEKDAY: Record<string, string> = {
+  Sun: 'Sunday',
+  Mon: 'Monday',
+  Tue: 'Tuesday',
+  Wed: 'Wednesday',
+  Thu: 'Thursday',
+  Fri: 'Friday',
+  Sat: 'Saturday'
+};
+
+function friendlyDays(label: string): string {
+  if (label === 'Mon–Fri') {
+    return 'Weekdays';
+  }
+  return FULL_WEEKDAY[label] ?? label;
+}
+
+/**
+ * Splits a compact summary into the name of the schedule and the time it runs
+ * at, so the panel can put them on separate lines: "Mon–Fri · 04:00" becomes
+ * { title: 'Weekdays', time: '04:00' }. Purely a display concern.
+ */
+export function splitSummary(short: string): { title: string; time: string } {
+  const parts = short.split(' · ');
+  const clock = /^(\d{1,2}:\d{2}(?: [AP]M)?)\s*(.*)$/.exec(parts[parts.length - 1]);
+  if (clock && parts.length > 1) {
+    const days = friendlyDays(parts.slice(0, -1).join(' · '));
+    return { title: clock[2] ? `${days} ${clock[2]}` : days, time: clock[1] };
+  }
+
+  const interval = /^every (\d+)([hm])(?: at (:\d{2}))?$/.exec(short);
+  if (interval) {
+    const count = Number(interval[1]);
+    const unit = interval[2] === 'h' ? 'hour' : 'minute';
+    return {
+      title: `Every ${count} ${unit}${count === 1 ? '' : 's'}`,
+      time: interval[3] ?? ''
+    };
+  }
+
+  return { title: friendlyDays(short), time: '' };
 }
 
 function shortDate(date: Date, timezone: string): string {
@@ -173,6 +220,9 @@ export function buildCalendarPayload(
         )
       : [];
 
+    const short = (info.valid && shortSummary(schedule.expression, timezone)) || info.description;
+    const { title, time } = splitSummary(short);
+
     return {
       index,
       color: SCHEDULE_COLORS[index % SCHEDULE_COLORS.length],
@@ -183,7 +233,9 @@ export function buildCalendarPayload(
       showLocalTime: local !== timezone,
       valid: info.valid,
       error: info.error,
-      short: (info.valid && shortSummary(schedule.expression, timezone)) || info.description,
+      short,
+      title,
+      timeLabel: time,
       description: info.description,
       line: text.slice(0, schedule.range.start).split('\n').length - 1,
       monthRunCount,
