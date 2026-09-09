@@ -140,7 +140,7 @@ _Screenshots are on the way._
   (`Ctrl+Shift+X` / `Cmd+Shift+X`) and click Install.
 - **Open VSX** (VSCodium, Gitpod, Cursor and friends) — search for the same name in the Extensions
   view.
-- **From a `.vsix`** — `code --install-extension github-actions-cron-viewer-0.2.0.vsix`, or
+- **From a `.vsix`** — `code --install-extension github-actions-cron-viewer-0.3.0.vsix`, or
   **Extensions → … → Install from VSIX…**
 
 ## Usage

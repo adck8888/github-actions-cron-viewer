@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.3.0
+
+- **Redesigned Schedule Calendar panel.** The header now names the workflow and summarises it in one
+  line — schedule count, next run, your timezone — with the schedules below it as readable items
+  instead of grey chips. Calendar days show the run count and a colour bar per schedule, Today and
+  the selected day are styled apart, and hovering a day lists its runs.
+- **Day details under the calendar.** Selecting a day lists every run of that day as
+  local time / schedule / workflow time, sorted by local time. Today is selected on open, or the
+  nearest day with a run when today is not in the month on screen.
+- **Shorter CodeLens** — `Mon–Fri · 04:00 UTC → 08:00 local · next in 5h 50m`. The whole lens opens
+  the calendar, and the local time is left out when the workflow already runs in your timezone.
+
 ## 0.2.0
 
 - **Schedule Calendar panel.** Clicking the CodeLens (or running

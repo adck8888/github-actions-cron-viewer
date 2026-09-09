@@ -2,7 +2,7 @@
   "name": "github-actions-cron-viewer",
   "displayName": "GitHub Actions Cron & Schedule Viewer",
   "description": "See when your GitHub Actions cron schedules run: a short inline summary, a month calendar, the next runs, your local time and timezone-aware validation.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "publisher": "adck8888",
   "license": "MIT",
   "icon": "media/icon.png",
