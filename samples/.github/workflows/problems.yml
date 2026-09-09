@@ -1,0 +1,14 @@
+name: Schedules with problems
+
+on:
+  schedule:
+    - cron: '*/2 * * * *'
+    - cron: 'not a cron'
+    - cron: '0 0 * * *'
+      timezone: 'Mars/Olympus'
+
+jobs:
+  noop:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "noop"

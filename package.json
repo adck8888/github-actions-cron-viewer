@@ -1,0 +1,107 @@
+{
+  "name": "github-actions-cron-viewer",
+  "displayName": "GitHub Actions Cron & Schedule Viewer",
+  "description": "Preview GitHub Actions cron schedules in plain English, see the next workflow runs and timezones inline in your workflow files.",
+  "version": "0.1.0",
+  "publisher": "adck8",
+  "license": "MIT",
+  "icon": "media/icon.png",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters",
+    "Other"
+  ],
+  "keywords": [
+    "github actions",
+    "github actions cron",
+    "github actions schedule",
+    "cron",
+    "cron viewer",
+    "cron preview",
+    "workflow schedule",
+    "github workflow",
+    "github actions workflow"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adck8/github-actions-cron-viewer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/adck8/github-actions-cron-viewer/issues"
+  },
+  "homepage": "https://github.com/adck8/github-actions-cron-viewer#readme",
+  "galleryBanner": {
+    "color": "#0D1117",
+    "theme": "dark"
+  },
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onLanguage:yaml",
+    "onLanguage:github-actions-workflow"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "githubActionsCron.previewSchedule",
+        "title": "Preview Schedule",
+        "category": "GitHub Actions"
+      }
+    ],
+    "configuration": {
+      "title": "GitHub Actions Cron & Schedule Viewer",
+      "properties": {
+        "githubActionsCron.enableCodeLens": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show an inline CodeLens above every cron schedule in a workflow file."
+        },
+        "githubActionsCron.nextRunsCount": {
+          "type": "number",
+          "default": 5,
+          "minimum": 1,
+          "maximum": 20,
+          "description": "How many upcoming runs to calculate for each schedule."
+        },
+        "githubActionsCron.use24HourFormat": {
+          "type": "boolean",
+          "default": true,
+          "description": "Render times using a 24-hour clock instead of AM/PM."
+        },
+        "githubActionsCron.showDiagnostics": {
+          "type": "boolean",
+          "default": true,
+          "description": "Report invalid cron expressions and schedules that run more often than GitHub Actions allows in the Problems panel."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run check-types && npm run lint && npm run bundle -- --minify",
+    "bundle": "node esbuild.js",
+    "check-types": "tsc --noEmit -p tsconfig.json",
+    "compile": "tsc -p tsconfig.json",
+    "lint": "eslint src",
+    "test": "npm run compile && mocha \"out/test/**/*.test.js\"",
+    "package": "vsce package"
+  },
+  "dependencies": {
+    "cron-parser": "^5.10.0",
+    "cronstrue": "^3.25.0",
+    "yaml": "^2.9.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^20.19.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^3.9.2",
+    "esbuild": "^0.28.2",
+    "eslint": "^9.38.0",
+    "mocha": "^11.7.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.70.0"
+  }
+}
