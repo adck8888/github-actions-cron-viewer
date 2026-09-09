@@ -40,11 +40,18 @@ export function collectSchedules(document: vscode.TextDocument): AnnotatedSchedu
       count: nextRunsCount,
       use24HourFormat
     }),
-    range: new vscode.Range(
-      document.positionAt(schedule.range.start),
-      document.positionAt(schedule.range.end)
-    )
+    range: singleLineRange(document, schedule.range.start, schedule.range.end)
   }));
+}
+
+/**
+ * Keeps the anchor on one line. Block scalars (`cron: >-`) span several lines,
+ * and a multi-line CodeLens or hover range looks broken.
+ */
+function singleLineRange(document: vscode.TextDocument, start: number, end: number): vscode.Range {
+  const from = document.positionAt(start);
+  const to = document.positionAt(end);
+  return new vscode.Range(from, to.line === from.line ? to : document.lineAt(from.line).range.end);
 }
 
 function lensTitle(entry: AnnotatedSchedule): string {

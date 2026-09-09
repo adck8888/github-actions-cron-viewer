@@ -91,11 +91,11 @@ not a valid IANA identifier, you get a warning and UTC is used instead.
 
 <!--
 Screenshots are not bundled yet. Before publishing, capture the CodeLens and the hover on
-samples/.github/workflows/nightly.yml, save them as media/screenshot-codelens.png and
+samples/.github/workflows/demo.yml, save them as media/screenshot-codelens.png and
 media/screenshot-hover.png, and replace this comment with:
 
-![Inline schedule CodeLens](https://raw.githubusercontent.com/adck8/github-actions-cron-viewer/main/media/screenshot-codelens.png)
-![Schedule details on hover](https://raw.githubusercontent.com/adck8/github-actions-cron-viewer/main/media/screenshot-hover.png)
+![Inline schedule CodeLens](https://raw.githubusercontent.com/adck8888/github-actions-cron-viewer/main/media/screenshot-codelens.png)
+![Schedule details on hover](https://raw.githubusercontent.com/adck8888/github-actions-cron-viewer/main/media/screenshot-hover.png)
 
 The Marketplace does not resolve relative image paths, so keep the absolute raw.githubusercontent.com URLs.
 -->
@@ -150,7 +150,7 @@ not require authentication, and never writes to your workflow files.
 ## Contributing
 
 Issues and pull requests are welcome on
-[GitHub](https://github.com/adck8/github-actions-cron-viewer).
+[GitHub](https://github.com/adck8888/github-actions-cron-viewer).
 
 ## License
 

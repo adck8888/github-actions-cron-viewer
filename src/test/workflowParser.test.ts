@@ -75,6 +75,44 @@ describe('findSchedules', () => {
     assert.deepStrictEqual(findSchedules('on:\n  schedule:\n    - notcron: 1\n'), []);
   });
 
+  it('handles the YAML shapes real workflows use', () => {
+    const cases: Array<[string, string, string[]]> = [
+      ['unquoted', 'on:\n  schedule:\n    - cron: 0 4 * * *\n', ['0 4 * * *']],
+      ['double quoted', 'on:\n  schedule:\n    - cron: "*/15 * * * *"\n', ['*/15 * * * *']],
+      ['CRLF', "on:\r\n  schedule:\r\n    - cron: '0 4 * * 1-5'\r\n", ['0 4 * * 1-5']],
+      ['flow style', "on:\n  schedule: [{cron: '0 4 * * *'}]\n", ['0 4 * * *']],
+      ['quoted on key', "'on':\n  schedule:\n    - cron: '0 4 * * *'\n", ['0 4 * * *']],
+      [
+        'comments',
+        "on:\n  schedule:\n    # nightly\n    - cron: '0 4 * * *' # utc\n    - cron: '0 5 * * *'\n",
+        ['0 4 * * *', '0 5 * * *']
+      ],
+      ['document marker', "---\non:\n  schedule:\n    - cron: '0 4 * * *'\n", ['0 4 * * *']],
+      ['block scalar', 'on:\n  schedule:\n    - cron: >-\n        0 4 * * *\n', ['0 4 * * *']],
+      ['deep indentation', "on:\n    schedule:\n        - cron: '0 4 * * *'\n", ['0 4 * * *']],
+      ['empty cron value', 'on:\n  schedule:\n    - cron:\n', []],
+      ['cron is a list', "on:\n  schedule:\n    - cron: ['0 4 * * *']\n", []]
+    ];
+
+    for (const [name, text, expected] of cases) {
+      assert.deepStrictEqual(
+        findSchedules(text).map((schedule) => schedule.expression),
+        expected,
+        `case: ${name}`
+      );
+    }
+  });
+
+  it('reads the timezone regardless of key order and flow style', () => {
+    const keyOrder = findSchedules(
+      "on:\n  schedule:\n    - timezone: 'Asia/Tokyo'\n      cron: '0 4 * * *'\n"
+    );
+    const flow = findSchedules("on:\n  schedule: [{cron: '0 4 * * *', timezone: 'Europe/Berlin'}]\n");
+
+    assert.strictEqual(keyOrder[0].timezone, 'Asia/Tokyo');
+    assert.strictEqual(flow[0].timezone, 'Europe/Berlin');
+  });
+
   it('survives broken YAML and empty input', () => {
     assert.deepStrictEqual(findSchedules(''), []);
     assert.deepStrictEqual(findSchedules('   \n\t: : :\n  - [\n'), []);
